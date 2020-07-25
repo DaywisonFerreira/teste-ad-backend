@@ -1,4 +1,5 @@
 const express = require('express');
+const Yup = require('yup');
 
 const User = require('../models/user');
 
@@ -7,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const users = await User.find();
-    return res.send({users})    
+    return res.status(200).send({users})    
   } catch (error) {
     return res.status(400).send({error: 'Error loading users'});
   }
@@ -17,7 +18,7 @@ router.get('/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
-    return res.send({user})
+    return res.status(200).send({user})
     
   } catch (error) {
     return res.status(400).send({error: 'Error loading users'})
@@ -26,6 +27,15 @@ router.get('/:userId', async (req, res) => {
 
 
 router.post('/register', async (req, res) => {
+  const schema = Yup.object({
+    name: Yup.string().required(),
+    email: Yup.string().email().required(),
+  });
+
+  if (!(await schema.isValid(req.body))) {
+    return res.status(400).send({error: 'Validation Fails'});
+  }
+
   const {email} = req.body;
   try {
 
@@ -34,13 +44,22 @@ router.post('/register', async (req, res) => {
     }
     const user = await User.create(req.body);
 
-    return res.send({user})
+    return res.status(200).send({user})
   } catch (error) {
     return res.status(400).send({error: 'Registration failed'})
   }
 });
 
 router.put('/:userId', async (req, res) => {
+  const schema = Yup.object({
+    name: Yup.string().required(),
+    email: Yup.string().email().required(),
+  });
+
+  if (!(await schema.isValid(req.body))) {
+    return res.status(400).send({error: 'Validation Fails'});
+  }
+  
   try {
     const {name, email} = req.body;
 
@@ -52,7 +71,7 @@ router.put('/:userId', async (req, res) => {
 
     await user.save();
 
-    return res.send({user})
+    return res.status(200).send({user})
   } catch (error) {
     return res.status(400).send({error: 'Updated user failed'})
   }

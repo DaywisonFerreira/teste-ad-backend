@@ -1,8 +1,6 @@
 const express = require('express');
-
 const User = require('../models/user');
 const sortArray = require('../util/sortArray');
-
 const Mail = require('../lib/Mail');
 
 const router = express.Router();
