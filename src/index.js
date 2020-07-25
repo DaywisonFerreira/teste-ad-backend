@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 
@@ -12,4 +14,4 @@ require('./controllers/userController')(app);
 require('./controllers/drawController')(app);
 
 
-app.listen(3333);
+app.listen(process.env.PORT || 3333);
